@@ -1,0 +1,26 @@
+{
+  "name": "holy-motors-project-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/batonitamazi/holy-motors-project-back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/batonitamazi/holy-motors-project-back/issues"
+  },
+  "homepage": "https://github.com/batonitamazi/holy-motors-project-back#readme",
+  "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "express": "^4.19.2",
+    "graphql": "^16.9.0",
+    "mongoose": "^8.4.3"
+  }
+}
