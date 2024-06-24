@@ -1,66 +1,30 @@
 const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 const mongoose = require('mongoose');
-const ProjectScreen = require('./models/ProjectScreen');
-const WorkScreen = require('./models/WorkScreen');
-const Story = require('./models/Story');
+const typeDefs = require('./graphql/schema');
+const resolvers = require('./graphql/resolvers');
 
-mongoose.connect('mongodb://localhost:27017/holy_motors_db', { useNewUrlParser: true, useUnifiedTopology: true });
+async function startServer() {
+    // Initialize Express
+    const app = express();
 
-const typeDefs = gql`
-  type Image {
-    src: String
-    alt: String
-  }
+    // Set up Apollo Server
+    const server = new ApolloServer({ typeDefs, resolvers });
+    await server.start();
+    server.applyMiddleware({ app });
 
-  type ProjectScreen {
-    id: ID
-    title: String
-    subtitle: String
-    image: Image
-    description: [String]
-    style: Style
-  }
+    // Connect to MongoDB
+    mongoose.connect('mongodb://127.0.0.1:27017/holy_motors_db')
+        .then(() => {
+            console.log('Connected to MongoDB');
 
-  type WorkScreen {
-    id: ID
-    title: String
-    image: Image
-    description: [String]
-  }
+            app.listen({ port: 3000 }, () => {
+                console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`);
+            });
+        })
+        .catch(err => {
+            console.error('Error connecting to MongoDB', err);
+        });
+}
 
-  type Style {
-    backgroundColor: String
-  }
-
-  type Story {
-    title: String
-    subtitle: String
-    story_description: String
-    descriptions: [String]
-  }
-
-  type Query {
-    projectScreens: [ProjectScreen]
-    workScreens: [WorkScreen]
-    story: Story
-  }
-`;
-
-const resolvers = {
-    Query: {
-        projectScreens: async () => await ProjectScreen.find(),
-        workScreens: async () => await WorkScreen.find(),
-        story: async () => await Story.findOne(),
-    },
-};
-
-const server = new ApolloServer({ typeDefs, resolvers });
-
-const app = express();
-server.applyMiddleware({ app });
-
-const PORT = 4000;
-app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}${server.graphqlPath}`);
-});
+startServer();
