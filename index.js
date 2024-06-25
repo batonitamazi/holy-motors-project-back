@@ -5,21 +5,18 @@ const typeDefs = require('./graphql/schema');
 const resolvers = require('./graphql/resolvers');
 
 async function startServer() {
-    // Initialize Express
     const app = express();
 
-    // Set up Apollo Server
     const server = new ApolloServer({ typeDefs, resolvers });
     await server.start();
     server.applyMiddleware({ app });
 
-    // Connect to MongoDB
     mongoose.connect('mongodb://127.0.0.1:27017/holy_motors_db')
         .then(() => {
             console.log('Connected to MongoDB');
 
             app.listen({ port: 3000 }, () => {
-                console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`);
+                console.log(`Server ready at http://localhost:3000${server.graphqlPath}`);
             });
         })
         .catch(err => {
